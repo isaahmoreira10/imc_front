@@ -49,7 +49,7 @@ async function calcularImc(){
 async function calcularMedia(){
     const dados={
         nota1: document.getElementById("nota1").value,
-        nota2: document.getElementById('nota2').value,
+        nota2: document.getElementById('nota2').value
     }
     try {
         const response = await fetch("http://localhost:3000/media",{
@@ -75,7 +75,11 @@ async function fazerLogin(){
             body: JSON.stringify(dados)
         });
         const resultado = await response.json();
-        document.getElementById("resultadoLogin").innerHTML = formatarResposta(resultado);
+        if(resultado.token){
+            window.location.href='index.html'
+        }else{
+            alert('Email ou Senha incorreto');
+        }
     } catch (error) {
         document.getElementById("resultadoLogin").innerHTML = formatarResposta({error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde"});
     }

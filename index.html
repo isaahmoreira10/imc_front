@@ -1,191 +1,33 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tabs com API</title>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 700px;
-            margin: 40px auto;
-            background: #f4f4f4;
-        }
-
-        .tabs {
-            display: flex;
-            margin-bottom: 10px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 15px;
-            cursor: pointer;
-            border: none;
-            background: #ddd;
-            font-size: 16px;
-        }
-
-        .tab-btn.active {
-            background: #007bff;
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            box-sizing: border-box;
-        }
-
-        button {
-            padding: 12px;
-            background: #28a745;
-            color: white;
-            border: none;
-            width: 100%;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 5px;
-        }
-
-        .resultado {
-            margin-top: 15px;
-            padding: 15px;
-            background: #eee;
-            border-radius: 5px;
-            min-height: 40px;
-        }
-    </style>
+    <title>tabs com api</title>
+    <link rel="stylesheet" href="index.css">
 </head>
-
+<script src="index.js"></script>
 <body>
-
     <div class="tabs">
         <button class="tab-btn active" onclick="abrirTab(0)">IMC</button>
         <button class="tab-btn" onclick="abrirTab(1)">Média</button>
     </div>
-
-    <!-- TAB 1 -->
     <div class="tab-content active">
         <h2>Calcular IMC</h2>
-
-        <input type="text" id="nome" placeholder="Nome">
-        <input type="number" id="idade" placeholder="Idade">
-        <input type="number" id="altura" placeholder="Altura (m)">
-        <input type="number" id="peso" placeholder="Peso (kg)">
-
-        <button onclick="calcularIMC()">Calcular IMC</button>
-
-        <div class="resultado" id="resultadoIMC"></div>
+        <input type="text" id="nome" placeholder="Digite seu nome">
+        <input type="number" id="idade" placeholder="Digite sua idade">
+        <input type="number" id="altura" placeholder="Digite sua altura">
+        <input type="number" id="peso" placeholder="Digite seu peso (kg)">
+        <button onclick="calcularImc()">Calcular IMC</button>
+        <div class="resultado" id="resultadoImc"></div>
     </div>
-
-    <!-- TAB 2 -->
     <div class="tab-content">
-        <h2>Calcular Média</h2>
-
-        <input type="number" id="nota1" placeholder="Nota 1">
-        <input type="number" id="nota2" placeholder="Nota 2">
-
-        <button onclick="calcularMedia()">Calcular Média</button>
-
+        <h2>Calcular média</h2>
+        <input type="number" id="nota1" placeholder="Digite sua primeira nota">
+        <input type="number" id="nota2" placeholder="Digite sua segunda nota">
+        <button onclick="calcularMedia()">Calcular média</button>
         <div class="resultado" id="resultadoMedia"></div>
     </div>
-
-    <script>
-        function abrirTab(index) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-
-            document.querySelectorAll('.tab-content')[index].classList.add('active');
-            document.querySelectorAll('.tab-btn')[index].classList.add('active');
-        }
-
-        function formatarResposta(resultado) {
-            if (resultado.erro) {
-                return `<div style="color: #721c24; padding: 15px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 5px; font-weight: bold;">
-                            ⚠️ Erro: ${resultado.erro}
-                        </div>`;
-            }
-
-            let html = `<div style="padding: 15px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; border-radius: 5px;">`;
-            html += `<h3 style="margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid #c3e6cb; padding-bottom: 5px;">✅ Sucesso</h3>`;
-            html += `<ul style="list-style-type: none; padding-left: 0; margin: 0;">`;
-
-            for (const [key, value] of Object.entries(resultado)) {
-                // Capitaliza a primeira letra e ajusta o nome (ex: imc -> IMC)
-                let label = key.charAt(0).toUpperCase() + key.slice(1);
-                if (key.toLowerCase() === 'imc') label = 'IMC';
-
-                html += `<li style="margin-bottom: 8px; font-size: 16px;">
-                            <strong style="color: #0b2e13;">${label}:</strong> ${value}
-                         </li>`;
-            }
-
-            html += `</ul></div>`;
-            return html;
-        }
-
-        async function calcularIMC() {
-            const dados = {
-                nome: document.getElementById("nome").value,
-                idade: document.getElementById("idade").value,
-                altura: document.getElementById("altura").value,
-                peso: document.getElementById("peso").value
-            };
-
-            try {
-                const res = await fetch("http://localhost:3000/imc", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(dados)
-                });
-
-                const resultado = await res.json();
-                document.getElementById("resultadoIMC").innerHTML = formatarResposta(resultado);
-            } catch (erro) {
-                document.getElementById("resultadoIMC").innerHTML = formatarResposta({ erro: "Falha na comunicação com o servidor." });
-            }
-        }
-
-        async function calcularMedia() {
-            const dados = {
-                nota1: document.getElementById("nota1").value,
-                nota2: document.getElementById("nota2").value
-            };
-
-            try {
-                const res = await fetch("http://localhost:3000/media", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(dados)
-                });
-
-                const resultado = await res.json();
-                document.getElementById("resultadoMedia").innerHTML = formatarResposta(resultado);
-            } catch (erro) {
-                document.getElementById("resultadoMedia").innerHTML = formatarResposta({ erro: "Falha na comunicação com o servidor." });
-            }
-        }
-    </script>
-
 </body>
 
 </html>
