@@ -9,17 +9,23 @@
 <script src="index.js"></script>
 <body>
     <div class="tabs">
-        <button class="tab-btn active" onclick="abrirTab(0)">IMC</button>
-        <button class="tab-btn" onclick="abrirTab(1)">Média</button>
+        <button class="tab-btn active" onclick="abrirTab(0)">Cadastrar cliente</button>
+        <button class="tab-btn" onclick="abrirTab(1)">Cadastrar produto</button>
     </div>
+    <a id="logout" class="logout-link" onclick="logout()">Logout</a>
+
+
     <div class="tab-content active">
-        <h2>Calcular IMC</h2>
+        <h2>Cadastrar cliente</h2>
         <input type="text" id="nome" placeholder="Digite seu nome">
-        <input type="number" id="idade" placeholder="Digite sua idade">
-        <input type="number" id="altura" placeholder="Digite sua altura">
-        <input type="number" id="peso" placeholder="Digite seu peso (kg)">
-        <button onclick="calcularImc()">Calcular IMC</button>
-        <div class="resultado" id="resultadoImc"></div>
+        <input type="number" id="CPF" placeholder="Digite sue CPF">
+        <input type="number" id="CEP" placeholder="Digite sua CEP" onblur="buscarEndereco()">
+        <input type="text" id="rua" placeholder="Digite sua rua">
+        <input type="text" id="cidade" placeholder="Digite sua cidade">
+        <input type="text" id="estado" placeholder="Digite seu estado">
+        <input type="number" id="numero" placeholder="Digite seu número">
+        <button onclick="fazerCadastro()">Cadastrar</button>
+        <div class="resultado" id="resultadoEndereco"></div>
     </div>
     <div class="tab-content">
         <h2>Calcular média</h2>
@@ -28,6 +34,7 @@
         <button onclick="calcularMedia()">Calcular média</button>
         <div class="resultado" id="resultadoMedia"></div>
     </div>
+
 </body>
 
 </html>

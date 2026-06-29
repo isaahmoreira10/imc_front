@@ -1,3 +1,8 @@
+if(window.location.pathname.endsWith('index.html') && !localStorage.getItem('token')){
+    window.location.href='login.html'
+}
+
+
 function abrirTab(index) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -76,11 +81,64 @@ async function fazerLogin(){
         });
         const resultado = await response.json();
         if(resultado.token){
-            window.location.href='index.html'
+            localStorage.setItem("token", resultado.token);
+            window.location.href='index.html';
         }else{
             alert('Email ou Senha incorreto');
         }
     } catch (error) {
         document.getElementById("resultadoLogin").innerHTML = formatarResposta({error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde"});
+    }
+}
+function logout(){
+    localStorage.removeItem('token')
+    window.location.href="login.html"
+}
+
+
+
+function buscarEndereco() {
+    const CEP = document.getElementById('CEP').value;
+  
+  
+    fetch(`https://viacep.com.br/ws/${CEP}/json/`)
+      .then(response => {
+        if (!response.ok) {
+            throw new Error('Erro na requisição: ' + response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+         // alert(data)
+        document.getElementById('rua').value= data.logradouro
+        document.getElementById('cidade').value= data.localidade
+        document.getElementById('estado').value= data.estado
+        document.getElementById('numero').focus()
+        console.log(data);
+      })
+      .catch(error => {
+        console.error('erro: ', error)
+      });
+}
+async function fazerCadastro(){
+    const dados={
+        nome: document.getElementById("nome").value,
+        CPF: document.getElementById('CPF').value,
+        CEP: document.getElementById('CEP').value,
+        rua: document.getElementById('rua').value,
+        cidade: document.getElementById('cidade').value,
+        estado: document.getElementById('estado').value,
+        numero: document.getElementById('numero').value
+    }
+    try {
+        const response = await fetch("http://localhost:3000/clientes",{
+            method: "POST",
+            headers:{"content-type":"application/json"},
+            body: JSON.stringify(dados)
+        });
+        const resultado = await response.json();
+        document.getElementById("resultadoEndereco").innerHTML = formatarResposta(resultado);
+    } catch (error) {
+        document.getElementById("resultadoEndereco").innerHTML = formatarResposta({error: "Ocorreu um erro  inesperado. Por favor tente novamente mais tarde"});
     }
 }
